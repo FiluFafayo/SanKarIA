@@ -1,11 +1,6 @@
-// api/generate.js (Versi Upgrade v1beta)
+// api/generate.js
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-// Kita paksa SDK untuk menggunakan endpoint v1beta
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY, { 
-  apiClient: { baseUrl: 'https://generativelanguage.googleapis.com/v1beta' } 
-});
+import makeResilientRequest from './_utils/resilient-requester.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -19,18 +14,33 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Prompt is required' });
     }
 
-    // --- DAN PERUBAHAN DI SINI ---
-    // Menggunakan model 'flash' yang lebih baru
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    // Susun payload sesuai format yang dibutuhkan API v1beta
+    const payload = {
+      contents: [{
+        parts: [{ text: prompt }]
+      }],
+      // Tambahkan safety settings untuk meminimalisir pemblokiran konten
+      safetySettings: [
+        { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
+      ],
+    };
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const result = await makeResilientRequest(payload);
+
+    // Ekstrak teks dari struktur respons yang baru
+    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!text) {
+      throw new Error('AI response is empty or has an unexpected structure.');
+    }
 
     res.status(200).json({ text });
 
   } catch (error) {
-    console.error("Error generating content:", error);
-    res.status(500).json({ error: 'Failed to generate content' });
+    console.error("Error di handler generate.js:", error);
+    res.status(500).json({ error: 'Failed to generate content', details: error.message });
   }
 }
