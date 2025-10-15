@@ -7,6 +7,7 @@ import CombatSimulator from './features/combat/CombatSimulator';
 import CharacterSheet from './features/character/CharacterSheet';
 import DMChat from './features/ai/DMChat';
 import Lobby from './features/multiplayer/Lobby';
+import GameSession from './features/multiplayer/GameSession'; // Impor GameSession
 
 function App() {
   const backgroundImageUrl = 'https://i.ibb.co.com/WNDDPp1K/dreamina-2025-10-15-6572-A-vast-cavernous-interior-of-a-magical.jpg';
@@ -43,6 +44,12 @@ function App() {
       console.error("Error saat logout:", error);
     }
   };
+
+  // Fungsi untuk menutup modal dan mereset state sesi
+    const handleCloseModal = () => {
+        setActiveModal(null);
+            setCurrentSessionId(null);
+              };
 
   const HARDCODED_CHARACTER_ID = "wvKjrx3IgTQunFDbNCIu";
 
@@ -115,11 +122,18 @@ function App() {
         </Modal>
       )}
 
-      {activeModal === 'TerminalLintas' && (
-          <Modal title="Terminal Lintas Multiplayer" onClose={() => setActiveModal(null)}>
-              <Lobby />
-                </Modal>
-                )}
+      {/* Upgrade Modal TerminalLintas */}
+            {activeModal === 'TerminalLintas' && (
+                    <Modal title="Terminal Lintas Multiplayer" onClose={handleCloseModal}>
+                              {currentSessionId ? (
+                                          // Jika sudah ada ID sesi, tampilkan ruang game
+                                                      <GameSession sessionId={currentSessionId} />
+                                                                ) : (
+                                                                            // Jika tidak, tampilkan lobby
+                                                                                        <Lobby onSessionCreated={setCurrentSessionId} />
+                                                                                                  )}
+                                                                                                          </Modal>
+                                                                                                          )}
 
       {/* 5. Modal baru untuk Character Creator */}
       {activeModal === 'CerminPersona' && (
