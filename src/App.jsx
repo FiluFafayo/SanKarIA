@@ -5,6 +5,7 @@ import Modal from './components/Modal';
 import CharacterCreator from './features/creation/CharacterCreator';
 import CombatSimulator from './features/combat/CombatSimulator';
 import CharacterSheet from './features/character/CharacterSheet';
+import DMChat from './features/ai/DMChat';
 
 function App() {
   const backgroundImageUrl = 'https://i.ibb.co.com/WNDDPp1K/dreamina-2025-10-15-6572-A-vast-cavernous-interior-of-a-magical.jpg';
@@ -98,8 +99,8 @@ function App() {
 
       {/* Render Modal secara kondisional */}
       {activeModal === 'MenaraKreasi' && (
-        <Modal title="Ruang Latihan Tempur" onClose={() => setActiveModal(null)}>
-          <CombatSimulator />
+        <Modal title="Sesi Petualangan" onClose={() => setActiveModal(null)}>
+          <DMChat />
         </Modal>
       )}
 
