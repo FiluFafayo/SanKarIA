@@ -2,7 +2,6 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// --- PERUBAHAN DI SINI ---
 // Kita paksa SDK untuk menggunakan endpoint v1beta
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY, { 
   apiClient: { baseUrl: 'https://generativelanguage.googleapis.com/v1beta' } 
