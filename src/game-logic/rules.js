@@ -44,5 +44,49 @@ export const calculateBaseAc = (dexModifier) => {
   return 10 + dexModifier;
 };
 
+/**
+ * Menyelesaikan sebuah aksi serangan, dari lemparan dadu hingga hasil.
+ * @param {number} attackerStrModifier - Strength modifier si penyerang.
+ * @param {number} attackerProficiency - Proficiency bonus si penyerang.
+ * @param {number} targetAc - Armor Class si target.
+ * @returns {object} - Sebuah objek yang merinci seluruh proses serangan.
+ */
+export const resolveAttack = (attackerStrModifier, attackerProficiency, targetAc) => {
+  // 1. Lempar dadu d20
+  const d20Roll = Math.floor(Math.random() * 20) + 1;
+
+  // 2. Hitung total bonus serangan
+  const attackBonus = attackerStrModifier + attackerProficiency;
+
+  // 3. Hitung total hasil lemparan serangan
+  const totalAttackRoll = d20Roll + attackBonus;
+
+  // 4. Tentukan hasilnya
+  let outcome = '';
+  let isCriticalHit = false;
+
+  if (d20Roll === 20) {
+    outcome = 'CRITICAL HIT!';
+    isCriticalHit = true;
+  } else if (d20Roll === 1) {
+    outcome = 'CRITICAL MISS!';
+  } else if (totalAttackRoll >= targetAc) {
+    outcome = 'HIT!';
+  } else {
+    outcome = 'MISS!';
+  }
+
+  // 5. Kembalikan laporan lengkap
+  return {
+    d20Roll,
+    attackBonus,
+    totalAttackRoll,
+    targetAc,
+    outcome,
+    isCriticalHit,
+    description: `Lemparan d20 (${d20Roll}) + Bonus Serangan (${attackBonus}) = ${totalAttackRoll} vs. AC Target (${targetAc}). Hasil: ${outcome}`
+  };
+};
+
 // Kita akan menambahkan lebih banyak aturan di sini nanti,
 // seperti logika untuk skill checks, saving throws, advantage, dll.

@@ -3,6 +3,7 @@ import { auth } from './firebase'; // <-- Impor mesin auth kita
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import Modal from './components/Modal';
 import CharacterCreator from './features/creation/CharacterCreator';
+import CombatSimulator from './features/combat/CombatSimulator';
 
 function App() {
   const backgroundImageUrl = 'https://i.ibb.co.com/WNDDPp1K/dreamina-2025-10-15-6572-A-vast-cavernous-interior-of-a-magical.jpg';
@@ -92,10 +93,10 @@ function App() {
         </main>
       </div>
 
-      {/* Render Modal secara kondisional HANYA jika activeModal tidak null */}
+      {/* Render Modal secara kondisional */}
       {activeModal === 'MenaraKreasi' && (
-        <Modal title="Menara Kreasi" onClose={() => setActiveModal(null)}>
-          <p>Di sini kamu akan memulai petualangan epikmu dari awal. Pilih duniamu, ciptakan pahlawanmu, dan tulis takdirmu.</p>
+        <Modal title="Ruang Latihan Tempur" onClose={() => setActiveModal(null)}>
+          <CombatSimulator />
         </Modal>
       )}
 
