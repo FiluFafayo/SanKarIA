@@ -7,8 +7,8 @@ const API_KEYS = [
 ].filter(Boolean);
 
 const MODELS = [
-    { name: 'gemini-1.5-flash-latest', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent' },
-    { name: 'gemini-1.5-pro-latest', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent' },
+    { name: 'gemini-2.0-flash', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent' },
+    { name: 'gemini-flash-latest', url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent' },
 ];
 
 // Fungsi untuk mengacak array (Fisher-Yates shuffle algorithm)
