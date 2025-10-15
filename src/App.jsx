@@ -4,6 +4,7 @@ import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from
 import Modal from './components/Modal';
 import CharacterCreator from './features/creation/CharacterCreator';
 import CombatSimulator from './features/combat/CombatSimulator';
+import CharacterSheet from './features/character/CharacterSheet';
 
 function App() {
   const backgroundImageUrl = 'https://i.ibb.co.com/WNDDPp1K/dreamina-2025-10-15-6572-A-vast-cavernous-interior-of-a-magical.jpg';
@@ -40,6 +41,8 @@ function App() {
       console.error("Error saat logout:", error);
     }
   };
+
+  const HARDCODED_CHARACTER_ID = "wvKjrx3IgTQunFDbNCIu";
 
   return (
     <div
@@ -101,8 +104,12 @@ function App() {
       )}
 
       {activeModal === 'ArsipPetualangan' && (
-        <Modal title="Arsip Petualangan" onClose={() => setActiveModal(null)}>
-          <p>Kisah yang tertunda menanti. Lanjutkan petualangan yang sudah kamu simpan dan lihat ke mana ceritanya akan membawamu.</p>
+        <Modal title="Lembar Karakter" onClose={() => setActiveModal(null)}>
+          {HARDCODED_CHARACTER_ID.startsWith('GANTI') ? (
+            <p className="text-yellow-400">Edit file App.jsx dan ganti nilai HARDCODED_CHARACTER_ID dengan ID karakter dari Firestore.</p>
+          ) : (
+            <CharacterSheet characterId={HARDCODED_CHARACTER_ID} />
+          )}
         </Modal>
       )}
 
