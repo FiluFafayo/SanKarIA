@@ -114,7 +114,7 @@ function App() {
       {/* 5. Modal baru untuk Character Creator */}
       {activeModal === 'CerminPersona' && (
         <Modal title="Ciptakan Pahlawanmu" onClose={() => setActiveModal(null)}>
-          <CharacterCreator />
+          <CharacterCreator closeModal={() => setActiveModal(null)} />
         </Modal>
       )}
     </div>
