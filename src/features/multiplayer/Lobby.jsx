@@ -12,7 +12,6 @@ function Lobby({ onSessionCreated }) { // <-- Prop baru di sini
               setIsLoading(true);
                   setError('');
                       try {
-                            const sessionData = { /* ... (kode tidak berubah) ... */ };
                                   const sessionData_full = {
                                           hostId: auth.currentUser.uid,
                                                   createdAt: serverTimestamp(),
@@ -32,7 +31,6 @@ function Lobby({ onSessionCreated }) { // <-- Prop baru di sini
                                                                                                                                               }
                                                                                                                                                 };
 
-                                                                                                                                                  return ( /* ... (kode JSX untuk UI tidak berubah) ... */ );
                                                                                                                                                     return (
                                                                                                                                                         <div className="text-left space-y-6">
                                                                                                                                                               <div>
@@ -57,4 +55,3 @@ function Lobby({ onSessionCreated }) { // <-- Prop baru di sini
                                                                                                                                                                                                                                                                                                  }
 
                                                                                                                                                                                                                                                                                                  export default Lobby;
-                                                                                                                                                                                                                                                                                                 
