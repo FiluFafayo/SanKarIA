@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { auth } from './firebase'; // <-- Impor mesin auth kita
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import Modal from './components/Modal';
+import CharacterCreator from './features/creation/CharacterCreator';
 
 function App() {
   const backgroundImageUrl = 'https://i.ibb.co.com/WNDDPp1K/dreamina-2025-10-15-6572-A-vast-cavernous-interior-of-a-magical.jpg';
@@ -52,31 +53,31 @@ function App() {
           <div className="flex items-center gap-4">
             <img src={user.photoURL} alt={user.displayName} className="w-10 h-10 rounded-full border-2 border-gray-400" />
             <span className="font-semibold">{user.displayName}</span>
-            <button onClick={handleLogout_full} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors">
-              Logout
-            </button>
+            <button onClick={handleLogout_full} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors">Logout</button>
           </div>
         ) : (
-          <button onClick={handleLogin_full} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">
-            Login dengan Google
-          </button>
+          <button onClick={handleLogin_full} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">Login dengan Google</button>
         )}
       </div>
 
       {/* Konten Utama */}
-      <div className="relative z-10 text-center">
+      <div className="relative z-10 text-center container mx-auto">
         <header className="mb-12">
-          <h1 className="text-6xl font-extrabold drop-shadow-lg" style={{ fontFamily: 'serif' }}>
-            SanKarIA
-          </h1>
+          <h1 className="text-6xl font-extrabold drop-shadow-lg" style={{ fontFamily: 'serif' }}>SanKarIA</h1>
           <p className="text-xl text-gray-300 mt-2">Pusat Sinergi</p>
         </header>
 
-        <main className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Setiap bangunan sekarang memanggil setActiveModal saat diklik */}
+        {/* 3. Grid diubah jadi 4 kolom */}
+        <main className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div onClick={() => setActiveModal('MenaraKreasi')} className="border-2 border-gray-500 rounded-lg p-6 bg-black bg-opacity-50 hover:bg-opacity-75 transition-all cursor-pointer">
             <h2 className="text-2xl font-bold">Menara Kreasi</h2>
             <p className="text-gray-400 mt-2">Mulai petualangan baru.</p>
+          </div>
+
+          {/* 4. Bangunan baru ditambahkan */}
+          <div onClick={() => setActiveModal('CerminPersona')} className="border-2 border-yellow-400 rounded-lg p-6 bg-black bg-opacity-50 hover:bg-opacity-75 transition-all cursor-pointer ring-2 ring-yellow-500/50">
+            <h2 className="text-2xl font-bold">Cermin Persona</h2>
+            <p className="text-gray-400 mt-2">Ciptakan & kelola pahlawanmu.</p>
           </div>
 
           <div onClick={() => setActiveModal('ArsipPetualangan')} className="border-2 border-gray-500 rounded-lg p-6 bg-black bg-opacity-50 hover:bg-opacity-75 transition-all cursor-pointer">
@@ -107,6 +108,13 @@ function App() {
       {activeModal === 'TerminalLintas' && (
         <Modal title="Terminal Lintas" onClose={() => setActiveModal(null)}>
           <p>Masukkan kode undangan dari temanmu untuk bergabung dalam petualangan mereka dan hadapi tantangan bersama.</p>
+        </Modal>
+      )}
+
+      {/* 5. Modal baru untuk Character Creator */}
+      {activeModal === 'CerminPersona' && (
+        <Modal title="Ciptakan Pahlawanmu" onClose={() => setActiveModal(null)}>
+          <CharacterCreator />
         </Modal>
       )}
     </div>
