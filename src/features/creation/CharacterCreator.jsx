@@ -4,6 +4,7 @@ import { useState } from 'react';
 import DiceBlock from './DiceBlock';
 import { auth, db } from '../../firebase'; // <-- 1. Impor koneksi Auth dan Database
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'; // <-- 2. Impor fungsi-fungsi Firestore
+import { getModifier, calculateBaseHp, calculateBaseAc } from '../../game-logic/rules';
 
 function CharacterCreator({ closeModal }) { // <-- Prop baru untuk menutup modal
   const [characterName, setCharacterName] = useState('');
@@ -36,40 +37,67 @@ function CharacterCreator({ closeModal }) { // <-- Prop baru untuk menutup modal
   // 4. FUNGSI SAKRAL: Menyimpan karakter ke Firestore
   const handleSaveCharacter = async () => {
     if (!auth.currentUser) {
-      alert("Kamu harus login untuk menyimpan karakter!");
-      return;
+        alert("Kamu harus login untuk menyimpan karakter!");
+        return;
     }
     setIsSaving(true);
 
-    // Siapkan data yang akan dikirim
+    // ---MULAI PERUBAHAN---
+
+    // 1. Ambil skor yang relevan
+    const constitutionScore = attributes.Constitution.score;
+    const dexterityScore = attributes.Dexterity.score;
+
+    // 2. Hitung modifier menggunakan Rules Engine
+    const conModifier = getModifier(constitutionScore);
+    const dexModifier = getModifier(dexterityScore);
+
+    // 3. Hitung HP dan AC menggunakan Rules Engine
+    const maxHp = calculateBaseHp(conModifier);
+    const armorClass = calculateBaseAc(dexModifier);
+
+    // 4. Siapkan data yang lebih lengkap
     const characterData = {
-      name: characterName,
-      level: 1,
-      ownerId: auth.currentUser.uid,
-      createdAt: serverTimestamp(),
-      attributes: {
+        name: characterName,
+        level: 1,
+        ownerId: auth.currentUser.uid,
+        createdAt: serverTimestamp(),
+
+        attributes: {
         strength: attributes.Strength.score,
         dexterity: attributes.Dexterity.score,
         constitution: attributes.Constitution.score,
         intelligence: attributes.Intelligence.score,
         wisdom: attributes.Wisdom.score,
         charisma: attributes.Charisma.score,
-      },
-      // Kita akan tambahkan Ras, Kelas, HP, dll di sini nanti
+        },
+
+        // Statistik tempur yang baru ditambahkan
+        hp: {
+        current: maxHp,
+        max: maxHp,
+        },
+        ac: armorClass,
+
+        // Placeholder untuk masa depan
+        race: "Human", // default
+        class: "Fighter", // default
     };
 
+    // ---AKHIR PERUBAHAN---
+
     try {
-      const docRef = await addDoc(collection(db, "characters"), characterData);
-      console.log("Karakter disimpan dengan ID: ", docRef.id);
-      alert(`Pahlawan "${characterName}" berhasil diciptakan!`);
-      closeModal(); // Tutup modal setelah berhasil
+        const docRef = await addDoc(collection(db, "characters"), characterData);
+        console.log("Karakter siap tempur disimpan dengan ID: ", docRef.id);
+        alert(`Pahlawan "${characterName}" berhasil ditempa!`);
+        closeModal();
     } catch (e) {
-      console.error("Error menambahkan dokumen: ", e);
-      alert("Gagal menciptakan pahlawan. Coba lagi.");
+        console.error("Error menambahkan dokumen: ", e);
+        alert("Gagal menempa pahlawan. Coba lagi.");
     } finally {
-      setIsSaving(false);
+        setIsSaving(false);
     }
-  };
+    };
 
   return (
     <div>
