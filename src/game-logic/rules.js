@@ -88,5 +88,32 @@ export const resolveAttack = (attackerStrModifier, attackerProficiency, targetAc
   };
 };
 
+/**
+ * Menyelesaikan sebuah aksi sihir sederhana seperti Magic Missile.
+ * @param {number} numberOfProjectiles - Jumlah proyektil sihir yang ditembakkan.
+ * @returns {object} - Laporan lengkap tentang kerusakan sihir.
+ */
+export const resolveMagicMissile = (numberOfProjectiles) => {
+  let totalDamage = 0;
+  const damageRolls = [];
+
+  for (let i = 0; i < numberOfProjectiles; i++) {
+    // Setiap proyektil menghasilkan 1d4 + 1 kerusakan Force.
+    const d4Roll = Math.floor(Math.random() * 4) + 1;
+    const damage = d4Roll + 1;
+    damageRolls.push(damage);
+    totalDamage += damage;
+  }
+
+  return {
+    spellName: "Magic Missile",
+    numberOfProjectiles,
+    damageRolls,
+    totalDamage,
+    damageType: "Force",
+    description: `Menembakkan ${numberOfProjectiles} proyektil. Kerusakan: ${damageRolls.join(' + ')} = ${totalDamage} Force damage. Serangan ini selalu kena.`
+  };
+};
+
 // Kita akan menambahkan lebih banyak aturan di sini nanti,
 // seperti logika untuk skill checks, saving throws, advantage, dll.
