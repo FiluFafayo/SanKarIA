@@ -6,6 +6,7 @@ import CharacterCreator from './features/creation/CharacterCreator';
 import CombatSimulator from './features/combat/CombatSimulator';
 import CharacterSheet from './features/character/CharacterSheet';
 import DMChat from './features/ai/DMChat';
+import Lobby from './features/multiplayer/Lobby';
 
 function App() {
   const backgroundImageUrl = 'https://i.ibb.co.com/WNDDPp1K/dreamina-2025-10-15-6572-A-vast-cavernous-interior-of-a-magical.jpg';
@@ -115,10 +116,10 @@ function App() {
       )}
 
       {activeModal === 'TerminalLintas' && (
-        <Modal title="Terminal Lintas" onClose={() => setActiveModal(null)}>
-          <p>Masukkan kode undangan dari temanmu untuk bergabung dalam petualangan mereka dan hadapi tantangan bersama.</p>
-        </Modal>
-      )}
+          <Modal title="Terminal Lintas Multiplayer" onClose={() => setActiveModal(null)}>
+              <Lobby />
+                </Modal>
+                )}
 
       {/* 5. Modal baru untuk Character Creator */}
       {activeModal === 'CerminPersona' && (
