@@ -1,10 +1,6 @@
 // api/upload.js
 import { put } from '@vercel/blob';
 
-export const config = {
-  runtime: 'edge',
-};
-
 export default async function handler(request) {
   const { searchParams } = new URL(request.url);
   const filename = searchParams.get('filename');
