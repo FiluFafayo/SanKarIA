@@ -106,7 +106,7 @@ function App() {
 					<p className="text-xl text-gray-300 mt-2">Pusat Sinergi</p>
 				</header>
 
-				<main className="grid grid-cols-1 md:grid-cols-5 gap-6"> // <-- Ubah jadi 5
+				<main className="grid grid-cols-1 md:grid-cols-5 gap-6">
 					<div
 						onClick={() => setActiveModal("MenaraKreasi")}
 						className="border-2 border-gray-500 rounded-lg p-6 bg-black bg-opacity-50 hover:bg-opacity-75 transition-all cursor-pointer"
@@ -140,10 +140,13 @@ function App() {
 						<p className="text-gray-400 mt-2">Bergabung dengan teman.</p>
 					</div>
 
-          <div onClick={() => setActiveModal('PasarGagasan')} className="border-2 border-green-500 rounded-lg p-6 bg-black bg-opacity-50 ...">
-            <h2 className="text-2xl font-bold">Pasar Gagasan</h2>
-            <p className="text-gray-400 mt-2">Jelajahi petualangan lain.</p>
-          </div>
+					<div
+						onClick={() => setActiveModal("PasarGagasan")}
+						className="border-2 border-green-500 rounded-lg p-6 bg-black bg-opacity-50 ..."
+					>
+						<h2 className="text-2xl font-bold">Pasar Gagasan</h2>
+						<p className="text-gray-400 mt-2">Jelajahi petualangan lain.</p>
+					</div>
 				</main>
 			</div>
 
@@ -187,11 +190,11 @@ function App() {
 				</Modal>
 			)}
 
-      {activeModal === 'PasarGagasan' && (
-        <Modal title="Pasar Gagasan Komunitas" onClose={handleCloseModal}>
-          <CampaignMarketplace />
-        </Modal>
-      )}
+			{activeModal === "PasarGagasan" && (
+				<Modal title="Pasar Gagasan Komunitas" onClose={handleCloseModal}>
+					<CampaignMarketplace />
+				</Modal>
+			)}
 		</div>
 	);
 }
