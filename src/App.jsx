@@ -151,46 +151,41 @@ function App() {
 				</main>
 			</div>
 
-			{/* Render Modal secara kondisional */}
+			{/* --- ARSITEKTUR MODAL FINAL --- */}
+
+			{/* Menara Kreasi -> Alat Bantu Storyteller */}
 			{activeModal === "MenaraKreasi" && (
 				<Modal title="Alat Bantu Storyteller" onClose={handleCloseModal}>
 					<StorytellerToolkit />
 				</Modal>
 			)}
 
-			{activeModal === "ArsipPetualangan" && (
-				<Modal title="Lembar Karakter" onClose={() => setActiveModal(null)}>
-					{HARDCODED_CHARACTER_ID.startsWith("GANTI") ? (
-						<p className="text-yellow-400">
-							Edit file App.jsx dan ganti nilai HARDCODED_CHARACTER_ID dengan ID
-							karakter dari Firestore.
-						</p>
-					) : (
-						<CharacterSheet characterId={HARDCODED_CHARACTER_ID} />
-					)}
+			{/* Cermin Persona -> Pencipta Karakter */}
+			{activeModal === "CerminPersona" && (
+				<Modal title="Ciptakan & Kelola Pahlawanmu" onClose={handleCloseModal}>
+					<CharacterCreator closeModal={handleCloseModal} />
 				</Modal>
 			)}
 
-			{/* Upgrade Modal TerminalLintas */}
+			{/* Arsip Petualangan -> Lembar Karakter (sementara, nanti jadi daftar kampanye) */}
+			{activeModal === "ArsipPetualangan" && (
+				<Modal title="Lembar Karakter" onClose={handleCloseModal}>
+					<CharacterSheet characterId={HARDCODED_CHARACTER_ID} />
+				</Modal>
+			)}
+
+			{/* Terminal Lintas -> Lobby & Sesi Multiplayer */}
 			{activeModal === "TerminalLintas" && (
 				<Modal title="Terminal Lintas Multiplayer" onClose={handleCloseModal}>
 					{currentSessionId ? (
-						// Jika sudah ada ID sesi, tampilkan ruang game
 						<GameSession sessionId={currentSessionId} />
 					) : (
-						// Jika tidak, tampilkan lobby
 						<Lobby onSessionCreated={setCurrentSessionId} />
 					)}
 				</Modal>
 			)}
 
-			{/* 5. Modal baru untuk Character Creator */}
-			{activeModal === "CerminPersona" && (
-				<Modal title="Ciptakan Pahlawanmu" onClose={() => setActiveModal(null)}>
-					<CharacterCreator closeModal={() => setActiveModal(null)} />
-				</Modal>
-			)}
-
+			{/* Pasar Gagasan -> Marketplace Komunitas */}
 			{activeModal === "PasarGagasan" && (
 				<Modal title="Pasar Gagasan Komunitas" onClose={handleCloseModal}>
 					<CampaignMarketplace />
