@@ -154,16 +154,17 @@ function App() {
 			{/* --- ARSITEKTUR MODAL FINAL --- */}
 
 			{/* Menara Kreasi -> Alat Bantu Storyteller */}
-			{activeModal === "MenaraKreasi" && (
-				<Modal title="Alat Bantu Storyteller" onClose={handleCloseModal}>
-					<StorytellerToolkit />
+			{activeModal === "ArsipPetualangan" && (
+				<Modal title="Lanjutkan Petualangan Solo" onClose={handleCloseModal}>
+					<DMChat />
 				</Modal>
 			)}
 
 			{/* Cermin Persona -> Pencipta Karakter */}
 			{activeModal === "CerminPersona" && (
-				<Modal title="Ciptakan & Kelola Pahlawanmu" onClose={handleCloseModal}>
-					<CharacterCreator closeModal={handleCloseModal} />
+				<Modal title="Profil Pahlawan" onClose={handleCloseModal}>
+					{/* Nanti kita bisa buat logika untuk switch antara creator dan sheet */}
+					<CharacterSheet characterId={HARDCODED_CHARACTER_ID} />
 				</Modal>
 			)}
 
