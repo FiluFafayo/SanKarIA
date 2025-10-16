@@ -1,16 +1,19 @@
-// api/upload.js (Versi Perbaikan untuk Node.js Runtime)
+// api/upload.js (Versi Final untuk Node.js Runtime)
 
 import { put } from '@vercel/blob';
 
-// TIDAK ADA LAGI 'export const config'
+// 1. Tambahkan konfigurasi ini untuk MENONAKTIFKAN body parser Vercel
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 export default async function handler(req, res) {
-  // 1. Ganti 'request' menjadi 'req' dan 'res'
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  // 2. Baca filename dari 'req.query' bukan 'searchParams'
   const filename = req.query.filename;
 
   if (!filename) {
@@ -18,12 +21,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 3. 'req.body' di Node.js runtime sudah berisi data file mentah
-    const blob = await put(filename, req.body, {
+    // 2. Ganti 'req.body' menjadi 'req'.
+    // Ini memberikan seluruh 'paket' mentah ke Vercel Blob.
+    const blob = await put(filename, req, {
       access: 'public',
     });
 
-    // 4. Kirim respons menggunakan 'res.status().json()'
     return res.status(200).json(blob);
 
   } catch (error) {
