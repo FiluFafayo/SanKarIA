@@ -11,6 +11,7 @@ function StorytellerToolkit({ onCampaignCreated }) {
 	const [isUploading, setIsUploading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState("");
+	const [isPublic, setIsPublic] = useState(false);
 
 	const handleFileChange = (event) => {
 		setMapFile(event.target.files?.[0] || null);
@@ -52,7 +53,7 @@ function StorytellerToolkit({ onCampaignCreated }) {
 			storytellerId: auth.currentUser.uid,
 			createdAt: serverTimestamp(),
 			mapUrl: mapUrl, // <-- Simpan URL peta ke Firestore
-			isPublic: false,
+			isPublic: isPublic, // <-- Simpan status publikasi
 		};
 
 		try {
@@ -136,6 +137,23 @@ function StorytellerToolkit({ onCampaignCreated }) {
 					/>
 				</div>
 			)}
+
+			{/* Checkbox Publikasi Baru */}
+			<div className="flex items-center border-t border-gray-600 pt-4">
+				<input
+					id="isPublic"
+					type="checkbox"
+					checked={isPublic}
+					onChange={(e) => setIsPublic(e.target.checked)}
+					className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-600"
+				/>
+				<label
+					htmlFor="isPublic"
+					className="ml-2 text-sm font-medium text-gray-300"
+				>
+					Publikasikan ke Pasar Gagasan?
+				</label>
+			</div>
 
 			<button
 				onClick={handleSaveCampaign}
