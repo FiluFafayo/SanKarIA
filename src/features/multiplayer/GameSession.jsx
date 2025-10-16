@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { db, auth } from "../../firebase";
 import { doc, onSnapshot, updateDoc, arrayUnion } from "firebase/firestore";
-import GameMap from '../storyteller/GameMap';
+import GameMap from "../storyteller/GameMap";
 
 function GameSession({ sessionId }) {
 	const [sessionData, setSessionData] = useState(null);
@@ -29,6 +29,25 @@ function GameSession({ sessionId }) {
 		// Fungsi cleanup: berhenti langganan saat komponen tidak lagi ditampilkan
 		return () => unsubscribe();
 	}, [sessionId]);
+
+	const handleMoveToken = async (newPosition) => {
+		if (!auth.currentUser) return;
+
+		const sessionRef = doc(db, "sessions", sessionId);
+		const playerId = auth.currentUser.uid;
+
+		// Kita menggunakan "dot notation" untuk mengupdate field di dalam map
+		const fieldPath = `gameState.tokenPositions.${playerId}`;
+
+		try {
+			await updateDoc(sessionRef, {
+				[fieldPath]: newPosition,
+			});
+		} catch (err) {
+			console.error("Gagal menggerakkan token:", err);
+			alert("Gagal bergerak. Cek aturan keamanan Firestore.");
+		}
+	};
 
 	// FUNGSI BARU UNTUK MENGIRIM PESAN
 	const handleSendMessage = async () => {
@@ -62,14 +81,15 @@ function GameSession({ sessionId }) {
 
 	return (
 		<div className="flex flex-col h-[80vh]">
-			{" "}
 			{/* Tinggikan sedikit modalnya */}
 			{/* Bagian Peta Taktis */}
 			<div className="mb-4">
+				{/* Berikan fungsi handleMoveToken ke GameMap */}
 				<GameMap
 					mapUrl={sessionData.mapUrl}
 					players={sessionData.players}
 					tokenPositions={sessionData.gameState.tokenPositions}
+					onMapClick={handleMoveToken}
 				/>
 			</div>
 			{/* Bagian Obrolan */}

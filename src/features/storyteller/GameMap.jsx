@@ -17,7 +17,8 @@ function PlayerToken({ player, position }) {
 	);
 }
 
-function GameMap({ mapUrl, players, tokenPositions }) {
+// Komponen GameMap sekarang menerima prop onMapClick
+function GameMap({ mapUrl, players, tokenPositions, onMapClick }) {
 	if (!mapUrl) {
 		return (
 			<div className="text-center p-8 bg-gray-800 rounded-lg">
@@ -26,19 +27,31 @@ function GameMap({ mapUrl, players, tokenPositions }) {
 		);
 	}
 
+	const handleMapClick = (event) => {
+		// Dapatkan area klik dari elemen peta
+		const rect = event.currentTarget.getBoundingClientRect();
+		// Hitung koordinat X dan Y di dalam elemen
+		const x = event.clientX - rect.left;
+		const y = event.clientY - rect.top;
+		// Panggil fungsi yang diberikan dari induk (GameSession)
+		onMapClick({ x, y });
+	};
+
 	return (
-		<div className="relative w-full bg-gray-900 rounded-lg overflow-hidden border-2 border-gray-600">
+		// onMapClick ditempatkan di sini!
+		<div
+			onClick={handleMapClick}
+			className="relative w-full bg-gray-900 rounded-lg overflow-hidden border-2 border-gray-600 cursor-pointer"
+		>
 			<img
 				src={mapUrl}
 				alt="Peta Pertempuran"
 				className="w-full h-full object-cover"
 			/>
 
-			{/* Render semua token pemain */}
 			{players.map((playerId) => {
 				const position = tokenPositions[playerId];
-				if (!position) return null; // Jangan render jika pemain belum punya posisi
-
+				if (!position) return null;
 				return (
 					<PlayerToken
 						key={playerId}
