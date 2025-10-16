@@ -154,9 +154,9 @@ function App() {
 			{/* --- ARSITEKTUR MODAL FINAL --- */}
 
 			{/* Menara Kreasi -> Alat Bantu Storyteller */}
-			{activeModal === "ArsipPetualangan" && (
-				<Modal title="Lanjutkan Petualangan Solo" onClose={handleCloseModal}>
-					<DMChat />
+			{activeModal === "MenaraKreasi" && (
+				<Modal title="Alat Bantu Storyteller" onClose={handleCloseModal}>
+					<StorytellerToolkit />
 				</Modal>
 			)}
 
@@ -170,8 +170,8 @@ function App() {
 
 			{/* Arsip Petualangan -> Lembar Karakter (sementara, nanti jadi daftar kampanye) */}
 			{activeModal === "ArsipPetualangan" && (
-				<Modal title="Lembar Karakter" onClose={handleCloseModal}>
-					<CharacterSheet characterId={HARDCODED_CHARACTER_ID} />
+				<Modal title="Lanjutkan Petualangan Solo" onClose={handleCloseModal}>
+					<DMChat />
 				</Modal>
 			)}
 
