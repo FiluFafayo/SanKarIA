@@ -14,6 +14,7 @@ import DMChat from "./features/ai/DMChat";
 import Lobby from "./features/multiplayer/Lobby";
 import GameSession from "./features/multiplayer/GameSession"; // Impor GameSession
 import StorytellerToolkit from "./features/storyteller/StorytellerToolkit";
+import CampaignMarketplace from "./features/community/CampaignMarketplace";
 
 function App() {
 	const backgroundImageUrl =
