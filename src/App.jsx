@@ -13,6 +13,7 @@ import CharacterSheet from "./features/character/CharacterSheet";
 import DMChat from "./features/ai/DMChat";
 import Lobby from "./features/multiplayer/Lobby";
 import GameSession from "./features/multiplayer/GameSession"; // Impor GameSession
+import StorytellerToolkit from "./features/storyteller/StorytellerToolkit";
 
 function App() {
 	const backgroundImageUrl =
@@ -144,8 +145,8 @@ function App() {
 
 			{/* Render Modal secara kondisional */}
 			{activeModal === "MenaraKreasi" && (
-				<Modal title="Sesi Petualangan" onClose={() => setActiveModal(null)}>
-					<DMChat />
+				<Modal title="Alat Bantu Storyteller" onClose={handleCloseModal}>
+					<StorytellerToolkit />
 				</Modal>
 			)}
 
@@ -163,17 +164,17 @@ function App() {
 			)}
 
 			{/* Upgrade Modal TerminalLintas */}
-      {activeModal === 'TerminalLintas' && (
-        <Modal title="Terminal Lintas Multiplayer" onClose={handleCloseModal}>
-          {currentSessionId ? (
-            // Jika sudah ada ID sesi, tampilkan ruang game
-            <GameSession sessionId={currentSessionId} />
-          ) : (
-            // Jika tidak, tampilkan lobby
-            <Lobby onSessionCreated={setCurrentSessionId} />
-          )}
-        </Modal>
-      )}
+			{activeModal === "TerminalLintas" && (
+				<Modal title="Terminal Lintas Multiplayer" onClose={handleCloseModal}>
+					{currentSessionId ? (
+						// Jika sudah ada ID sesi, tampilkan ruang game
+						<GameSession sessionId={currentSessionId} />
+					) : (
+						// Jika tidak, tampilkan lobby
+						<Lobby onSessionCreated={setCurrentSessionId} />
+					)}
+				</Modal>
+			)}
 
 			{/* 5. Modal baru untuk Character Creator */}
 			{activeModal === "CerminPersona" && (
