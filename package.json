@@ -15,7 +15,7 @@
     "firebase": "^10.12.2",
     "howler": "^2.2.4",
     "react": "^18.2.0",
-    "react-dice-complete": "^3.0.0",
+    "react-dice-complete": "^2.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
