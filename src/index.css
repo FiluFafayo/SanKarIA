@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'Cinzel Decorative';
+  src: url('/assets/fonts/CinzelDecorative-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
