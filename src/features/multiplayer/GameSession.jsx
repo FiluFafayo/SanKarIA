@@ -1,7 +1,7 @@
 // src/features/multiplayer/GameSession.jsx
 
 import { useState, useEffect } from "react";
-import { db } from "../../firebase";
+import { db, auth } from '../../firebase';
 import { doc, onSnapshot, updateDoc, arrayUnion } from "firebase/firestore";
 
 function GameSession({ sessionId }) {
