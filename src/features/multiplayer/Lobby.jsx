@@ -4,7 +4,6 @@ import { db, auth } from "../../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 function Lobby({ onSessionCreated }) {
-        // <-- Prop baru di sini
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState("");
 
@@ -15,18 +14,33 @@ function Lobby({ onSessionCreated }) {
 		}
 		setIsLoading(true);
 		setError("");
+
+		// HARDCODE: Tempel URL peta dari Vercel Blob yang berhasil kamu upload di sini.
+		const campaignMapUrl =
+			"https://7tl6q839zga1wfib.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-13%20at%2013.16.45%20%281%29-QpvTwUmjyt9dU4a85Q6uiy7VpmXjJ9.jpeg";
+
+		// Atur posisi awal untuk host
+		const initialTokenPositions = {
+			[auth.currentUser.uid]: { x: 100, y: 100 }, // Posisi awal di koordinat 100x100
+		};
+
+		const sessionData = {
+			hostId: auth.currentUser.uid,
+			createdAt: serverTimestamp(),
+			players: [auth.currentUser.uid],
+			mapUrl: campaignMapUrl, // <-- Simpan URL peta di sesi
+			gameState: {
+				currentTurn: auth.currentUser.uid,
+				chatLog: [
+					{ sender: "system", text: "Sesi permainan dimulai di atas peta!" },
+				],
+				tokenPositions: initialTokenPositions, // <-- Simpan posisi token
+			},
+		};
+
 		try {
-			const sessionData_full = {
-				hostId: auth.currentUser.uid,
-				createdAt: serverTimestamp(),
-				players: [auth.currentUser.uid],
-				gameState: {
-					currentTurn: auth.currentUser.uid,
-					chatLog: [{ sender: "system", text: "Sesi permainan dimulai!" }],
-				},
-			};
-			const docRef = await addDoc(collection(db, "sessions"), sessionData_full);
-			onSessionCreated(docRef.id); // <-- Panggil fungsi dari App.jsx dengan ID baru
+			const docRef = await addDoc(collection(db, "sessions"), sessionData);
+			onSessionCreated(docRef.id);
 		} catch (err) {
 			console.error("Gagal membuat sesi:", err);
 			setError("Gagal membuat sesi. Cek aturan keamanan.");
