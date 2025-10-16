@@ -1,5 +1,4 @@
-// src/features/storyteller/StorytellerToolkit.jsx
-
+// src/features/storyteller/StorytellerToolkit.jsx (Versi Upgrade)
 import { useState } from "react";
 import { db, auth } from "../../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -7,8 +6,35 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 function StorytellerToolkit({ onCampaignCreated }) {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
+	const [mapFile, setMapFile] = useState(null); // <-- State untuk file peta
+	const [mapUrl, setMapUrl] = useState(""); // <-- State untuk URL setelah upload
+	const [isUploading, setIsUploading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState("");
+
+	const handleFileChange = (event) => {
+		setMapFile(event.target.files?.[0] || null);
+	};
+
+	const handleUploadMap = async () => {
+		if (!mapFile) return;
+		setIsUploading(true);
+		setError("");
+
+		try {
+			const response = await fetch(`/api/upload?filename=${mapFile.name}`, {
+				method: "POST",
+				body: mapFile,
+			});
+			const newBlob = await response.json();
+			setMapUrl(newBlob.url); // Simpan URL yang dikembalikan Vercel Blob
+		} catch (err) {
+			console.error("Gagal mengunggah peta:", err);
+			setError("Gagal mengunggah peta.");
+		} finally {
+			setIsUploading(false);
+		}
+	};
 
 	const handleSaveCampaign = async () => {
 		if (!title.trim() || !description.trim()) {
@@ -20,25 +46,23 @@ function StorytellerToolkit({ onCampaignCreated }) {
 			return;
 		}
 		setIsSaving(true);
-		setError("");
-
 		const campaignData = {
-			title: title,
-			description: description,
+			title,
+			description,
 			storytellerId: auth.currentUser.uid,
 			createdAt: serverTimestamp(),
-			isPublic: false, // Default tidak publik
-			// Di sini kita akan menambahkan data lain seperti peta, NPC, dll.
+			mapUrl: mapUrl, // <-- Simpan URL peta ke Firestore
+			isPublic: false,
 		};
 
 		try {
-			const docRef = await addDoc(collection(db, "campaigns"), campaignData);
+			await addDoc(collection(db, "campaigns"), campaignData);
 			alert(`Kampanye "${title}" berhasil disimpan!`);
-			if (onCampaignCreated) {
-				onCampaignCreated(docRef.id);
-			}
+			// Reset form
 			setTitle("");
 			setDescription("");
+			setMapFile(null);
+			setMapUrl("");
 		} catch (err) {
 			console.error("Gagal menyimpan kampanye: ", err);
 			setError("Gagal menyimpan kampanye. Cek aturan keamanan Firestore.");
@@ -82,12 +106,43 @@ function StorytellerToolkit({ onCampaignCreated }) {
 					placeholder="Jelaskan premis utama dari petualangan yang akan kamu buat..."
 				></textarea>
 			</div>
+			<div>
+				<label className="block mb-2 text-sm font-medium text-gray-300">
+					Peta Pertempuran (Opsional):
+				</label>
+				<div className="flex gap-2">
+					<input
+						type="file"
+						onChange={handleFileChange}
+						className="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+					/>
+					<button
+						onClick={handleUploadMap}
+						disabled={!mapFile || isUploading}
+						className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition-colors disabled:bg-gray-500"
+					>
+						{isUploading ? "..." : "Upload"}
+					</button>
+				</div>
+			</div>
+
+			{mapUrl && (
+				<div className="border-t border-gray-600 pt-4">
+					<p className="text-sm text-gray-300 mb-2">Pratinjau Peta:</p>
+					<img
+						src={mapUrl}
+						alt="Pratinjau Peta"
+						className="rounded-lg w-full object-cover"
+					/>
+				</div>
+			)}
+
 			<button
 				onClick={handleSaveCampaign}
-				disabled={isSaving}
-				className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition-colors disabled:bg-gray-500"
+				disabled={isSaving || !mapUrl}
+				className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed"
 			>
-				{isSaving ? "Menyimpan..." : "Simpan Kerangka Kampanye"}
+				{isSaving ? "Menyimpan..." : "Simpan Kampanye"}
 			</button>
 			{error && (
 				<p className="text-red-500 text-center text-sm mt-2">{error}</p>
@@ -95,5 +150,4 @@ function StorytellerToolkit({ onCampaignCreated }) {
 		</div>
 	);
 }
-
 export default StorytellerToolkit;
