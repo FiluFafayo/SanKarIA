@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { db, auth } from "../../firebase";
 import { doc, onSnapshot, updateDoc, arrayUnion } from "firebase/firestore";
+import GameMap from '../storyteller/GameMap';
 
 function GameSession({ sessionId }) {
 	const [sessionData, setSessionData] = useState(null);
