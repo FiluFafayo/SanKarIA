@@ -1,41 +1,38 @@
 import { useState, useEffect } from "react";
-import { auth } from "./firebase"; // <-- Impor mesin auth kita
+import { auth } from "./firebase";
 import {
 	GoogleAuthProvider,
 	signInWithPopup,
 	signOut,
 	onAuthStateChanged,
 } from "firebase/auth";
-import Modal from "./components/Modal";
-import CharacterCreator from "./features/creation/CharacterCreator";
-import CombatSimulator from "./features/combat/CombatSimulator";
-import CharacterSheet from "./features/character/CharacterSheet";
-import DMChat from "./features/ai/DMChat";
-import Lobby from "./features/multiplayer/Lobby";
-import GameSession from "./features/multiplayer/GameSession"; // Impor GameSession
-import StorytellerToolkit from "./features/storyteller/StorytellerToolkit";
-import CampaignMarketplace from "./features/community/CampaignMarketplace";
+
+// Placeholder Components - Nanti akan kita ganti dengan komponen asli
+const StorytellerToolkit = () => <div>Konten Storyteller Toolkit di sini.</div>;
+const DMChat = () => <div>Konten DM Chat di sini.</div>;
+const CharacterSheet = () => <div>Konten Character Sheet di sini.</div>;
+const Lobby = () => <div>Konten Lobby Multiplayer di sini.</div>;
+const CampaignMarketplace = () => (
+	<div>Konten Campaign Marketplace di sini.</div>
+);
+
+const HARDCODED_CHARACTER_ID = "wvKjrx3IgTQunFDbNCIu";
 
 function App() {
 	const backgroundImageUrl =
 		"https://i.ibb.co.com/WNDDPp1K/dreamina-2025-10-15-6572-A-vast-cavernous-interior-of-a-magical.jpg";
 
-	// State untuk menyimpan data pengguna yang sedang login
 	const [user, setUser] = useState(null);
-	const [activeModal, setActiveModal] = useState(null);
-	const [currentSessionId, setCurrentSessionId] = useState(null);
+	const [modalId, setModalId] = useState(null);
 
-	// Listener untuk memantau perubahan status login
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-			setUser(currentUser);
-		});
-		// Cleanup listener saat komponen tidak lagi digunakan
+		const unsubscribe = onAuthStateChanged(auth, (currentUser) =>
+			setUser(currentUser)
+		);
 		return () => unsubscribe();
 	}, []);
 
-	// Fungsi untuk handle login
-	const handleLogin_full = async () => {
+	const handleLogin = async () => {
 		const provider = new GoogleAuthProvider();
 		try {
 			await signInWithPopup(auth, provider);
@@ -44,8 +41,7 @@ function App() {
 		}
 	};
 
-	// Fungsi untuk handle logout
-	const handleLogout_full = async () => {
+	const handleLogout = async () => {
 		try {
 			await signOut(auth);
 		} catch (error) {
@@ -53,145 +49,132 @@ function App() {
 		}
 	};
 
-	// Fungsi untuk menutup modal dan mereset state sesi
-	const handleCloseModal = () => {
-		setActiveModal(null);
-		setCurrentSessionId(null);
-	};
+	const openModal = (id) => document.getElementById(id).showModal();
 
-	const HARDCODED_CHARACTER_ID = "wvKjrx3IgTQunFDbNCIu";
+	const buildings = [
+		{
+			id: "menara_kreasi",
+			title: "Menara Kreasi",
+			description: "Ciptakan petualangan baru.",
+			modalContent: <StorytellerToolkit />,
+			borderColor: "border-yellow-500",
+		},
+		{
+			id: "cermin_persona",
+			title: "Cermin Persona",
+			description: "Lihat & kelola pahlawanmu.",
+			modalContent: <CharacterSheet characterId={HARDCODED_CHARACTER_ID} />,
+			borderColor: "border-cyan-500",
+		},
+		{
+			id: "arsip_petualangan",
+			title: "Arsip Petualangan",
+			description: "Lanjutkan sesi solo.",
+			modalContent: <DMChat />,
+			borderColor: "border-purple-500",
+		},
+		{
+			id: "terminal_lintas",
+			title: "Terminal Lintas",
+			description: "Bermain bersama teman.",
+			modalContent: <Lobby />,
+			borderColor: "border-red-500",
+		},
+		{
+			id: "pasar_gagasan",
+			title: "Pasar Gagasan",
+			description: "Jelajahi karya komunitas.",
+			modalContent: <CampaignMarketplace />,
+			borderColor: "border-green-500",
+		},
+	];
 
 	return (
 		<div
-			className="relative min-h-screen bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center text-white p-4"
+			className="hero min-h-screen"
 			style={{ backgroundImage: `url(${backgroundImageUrl})` }}
 		>
-			<div className="absolute inset-0 bg-black opacity-60"></div>
+			<div className="hero-overlay bg-opacity-70 backdrop-blur-sm"></div>
 
-			{/* Header Aplikasi (Login/Logout) */}
-			<div className="absolute top-5 right-5 z-20">
+			{/* Header Pengguna */}
+			<div className="absolute top-4 right-4 z-20">
 				{user ? (
-					<div className="flex items-center gap-4">
-						<img
-							src={user.photoURL}
-							alt={user.displayName}
-							className="w-10 h-10 rounded-full border-2 border-gray-400"
-						/>
-						<span className="font-semibold">{user.displayName}</span>
-						<button
-							onClick={handleLogout_full}
-							className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors"
+					<div className="dropdown dropdown-end">
+						<div
+							tabIndex={0}
+							role="button"
+							className="btn btn-ghost btn-circle avatar"
 						>
-							Logout
-						</button>
+							<div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+								<img alt="User Avatar" src={user.photoURL} />
+							</div>
+						</div>
+						<ul
+							tabIndex={0}
+							className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+						>
+							<li className="menu-title">
+								<span>{user.displayName}</span>
+							</li>
+							<li>
+								<button onClick={handleLogout}>Logout</button>
+							</li>
+						</ul>
 					</div>
 				) : (
-					<button
-						onClick={handleLogin_full}
-						className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors"
-					>
+					<button onClick={handleLogin} className="btn btn-primary">
 						Login dengan Google
 					</button>
 				)}
 			</div>
 
-			{/* Konten Utama */}
-			<div className="relative z-10 text-center container mx-auto">
-				<header className="mb-12">
+			<div className="hero-content text-center text-neutral-content">
+				<div className="max-w-4xl">
 					<h1
-						className="text-6xl font-extrabold drop-shadow-lg"
-						style={{ fontFamily: "serif" }}
+						className="mb-5 text-7xl font-bold font-serif tracking-wider"
+						style={{ textShadow: "2px 2px 8px rgba(0,0,0,0.7)" }}
 					>
 						SanKarIA
 					</h1>
-					<p className="text-xl text-gray-300 mt-2">Pusat Sinergi</p>
-				</header>
+					<p className="mb-5 text-lg">
+						Gerbang menuju petualangan tanpa batas, ditenagai oleh imajinasi dan
+						kecerdasan buatan.
+					</p>
 
-				<main className="grid grid-cols-1 md:grid-cols-5 gap-6">
-					<div
-						onClick={() => setActiveModal("MenaraKreasi")}
-						className="border-2 border-gray-500 rounded-lg p-6 bg-black bg-opacity-50 hover:bg-opacity-75 transition-all cursor-pointer"
-					>
-						<h2 className="text-2xl font-bold">Menara Kreasi</h2>
-						<p className="text-gray-400 mt-2">Mulai petualangan baru.</p>
+					<div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+						{buildings.map((building) => (
+							<div
+								key={building.id}
+								className={`card bg-base-100/30 backdrop-blur-md shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 ${building.borderColor}`}
+								onClick={() => openModal(building.id)}
+							>
+								<div className="card-body items-center text-center p-4">
+									<h2 className="card-title text-base">{building.title}</h2>
+									<p className="text-xs">{building.description}</p>
+								</div>
+							</div>
+						))}
 					</div>
-
-					{/* 4. Bangunan baru ditambahkan */}
-					<div
-						onClick={() => setActiveModal("CerminPersona")}
-						className="border-2 border-yellow-400 rounded-lg p-6 bg-black bg-opacity-50 hover:bg-opacity-75 transition-all cursor-pointer ring-2 ring-yellow-500/50"
-					>
-						<h2 className="text-2xl font-bold">Cermin Persona</h2>
-						<p className="text-gray-400 mt-2">Ciptakan & kelola pahlawanmu.</p>
-					</div>
-
-					<div
-						onClick={() => setActiveModal("ArsipPetualangan")}
-						className="border-2 border-gray-500 rounded-lg p-6 bg-black bg-opacity-50 hover:bg-opacity-75 transition-all cursor-pointer"
-					>
-						<h2 className="text-2xl font-bold">Arsip Petualangan</h2>
-						<p className="text-gray-400 mt-2">Lanjutkan kisahmu.</p>
-					</div>
-
-					<div
-						onClick={() => setActiveModal("TerminalLintas")}
-						className="border-2 border-gray-500 rounded-lg p-6 bg-black bg-opacity-50 hover:bg-opacity-75 transition-all cursor-pointer"
-					>
-						<h2 className="text-2xl font-bold">Terminal Lintas</h2>
-						<p className="text-gray-400 mt-2">Bergabung dengan teman.</p>
-					</div>
-
-					<div
-						onClick={() => setActiveModal("PasarGagasan")}
-						className="border-2 border-green-500 rounded-lg p-6 bg-black bg-opacity-50 ..."
-					>
-						<h2 className="text-2xl font-bold">Pasar Gagasan</h2>
-						<p className="text-gray-400 mt-2">Jelajahi petualangan lain.</p>
-					</div>
-				</main>
+				</div>
 			</div>
 
-			{/* --- ARSITEKTUR MODAL FINAL --- */}
-
-			{/* Menara Kreasi -> Alat Bantu Storyteller */}
-			{activeModal === "MenaraKreasi" && (
-				<Modal title="Alat Bantu Storyteller" onClose={handleCloseModal}>
-					<StorytellerToolkit />
-				</Modal>
-			)}
-
-			{/* Cermin Persona -> Pencipta Karakter */}
-			{activeModal === "CerminPersona" && (
-				<Modal title="Profil Pahlawan" onClose={handleCloseModal}>
-					{/* Nanti kita bisa buat logika untuk switch antara creator dan sheet */}
-					<CharacterSheet characterId={HARDCODED_CHARACTER_ID} />
-				</Modal>
-			)}
-
-			{/* Arsip Petualangan -> Lembar Karakter (sementara, nanti jadi daftar kampanye) */}
-			{activeModal === "ArsipPetualangan" && (
-				<Modal title="Lanjutkan Petualangan Solo" onClose={handleCloseModal}>
-					<DMChat />
-				</Modal>
-			)}
-
-			{/* Terminal Lintas -> Lobby & Sesi Multiplayer */}
-			{activeModal === "TerminalLintas" && (
-				<Modal title="Terminal Lintas Multiplayer" onClose={handleCloseModal}>
-					{currentSessionId ? (
-						<GameSession sessionId={currentSessionId} />
-					) : (
-						<Lobby onSessionCreated={setCurrentSessionId} />
-					)}
-				</Modal>
-			)}
-
-			{/* Pasar Gagasan -> Marketplace Komunitas */}
-			{activeModal === "PasarGagasan" && (
-				<Modal title="Pasar Gagasan Komunitas" onClose={handleCloseModal}>
-					<CampaignMarketplace />
-				</Modal>
-			)}
+			{/* Kumpulan Modal */}
+			{buildings.map((building) => (
+				<dialog key={building.id} id={building.id} className="modal">
+					<div className="modal-box w-11/12 max-w-5xl bg-base-200/80 backdrop-blur-lg border border-gray-700">
+						<h3 className="font-bold text-2xl mb-4">{building.title}</h3>
+						{building.modalContent}
+						<div className="modal-action">
+							<form method="dialog">
+								<button className="btn">Tutup</button>
+							</form>
+						</div>
+					</div>
+					<form method="dialog" className="modal-backdrop">
+						<button>close</button>
+					</form>
+				</dialog>
+			))}
 		</div>
 	);
 }
