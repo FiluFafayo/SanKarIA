@@ -1,21 +1,33 @@
-// api/upload.js
+// api/upload.js (Versi Perbaikan untuk Node.js Runtime)
+
 import { put } from '@vercel/blob';
 
-export default async function handler(request) {
-  const { searchParams } = new URL(request.url);
-  const filename = searchParams.get('filename');
+// TIDAK ADA LAGI 'export const config'
 
-  if (!filename) {
-    return new Response(
-      JSON.stringify({ message: 'Filename is required' }),
-      { status: 400 },
-    );
+export default async function handler(req, res) {
+  // 1. Ganti 'request' menjadi 'req' dan 'res'
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  // `request.body` adalah file itu sendiri
-  const blob = await put(filename, request.body, {
-    access: 'public',
-  });
+  // 2. Baca filename dari 'req.query' bukan 'searchParams'
+  const filename = req.query.filename;
 
-  return new Response(JSON.stringify(blob), { status: 200 });
+  if (!filename) {
+    return res.status(400).json({ message: 'Filename is required' });
+  }
+
+  try {
+    // 3. 'req.body' di Node.js runtime sudah berisi data file mentah
+    const blob = await put(filename, req.body, {
+      access: 'public',
+    });
+
+    // 4. Kirim respons menggunakan 'res.status().json()'
+    return res.status(200).json(blob);
+
+  } catch (error) {
+    console.error("Error di fungsi upload:", error);
+    return res.status(500).json({ message: 'Gagal mengunggah file', error: error.message });
+  }
 }
